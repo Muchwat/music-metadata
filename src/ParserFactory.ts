@@ -1,12 +1,12 @@
-import {INativeAudioMetadata, IOptions, IAudioMetadata, ParserType} from "./type";
-import {ITokenizer} from "strtok3/lib/type";
-import * as fileType from "file-type";
-import * as MimeType from "media-typer";
+import { INativeAudioMetadata, IOptions, IAudioMetadata, ParserType } from './type';
+import { ITokenizer } from 'strtok3/lib/type';
+import * as fileType from 'file-type';
+import * as MimeType from './common/mime-type';
 
-import * as _debug from "debug";
-import {INativeMetadataCollector, MetadataCollector} from "./common/MetadataCollector";
+import * as _debug from 'debug';
+import { INativeMetadataCollector, MetadataCollector } from './common/MetadataCollector';
 
-const debug = _debug("music-metadata:parser:factory");
+const debug = _debug('music-metadata:parser:factory');
 
 export interface ITokenParser {
 
@@ -42,16 +42,16 @@ export class ParserFactory {
 
     if (!parserId) {
       // No MIME-type mapping found
-      debug("No parser found for MIME-type / extension: " + contentType);
+      debug('No parser found for MIME-type / extension: ' + contentType);
 
       const buf = Buffer.alloc(4100);
       return tokenizer.peekBuffer(buf, 0, buf.byteLength, tokenizer.position, true).then(() => {
         const guessedType = fileType(buf);
         if (!guessedType)
-          throw new Error("Failed to guess MIME-type");
+          throw new Error('Failed to guess MIME-type');
         parserId = ParserFactory.getParserIdForMimeType(guessedType.mime);
         if (!parserId)
-          throw new Error("Guessed MIME-type not supported: " + guessedType.mime);
+          throw new Error('Guessed MIME-type not supported: ' + guessedType.mime);
         return this._parse(tokenizer, parserId, opts);
       });
     }
@@ -72,51 +72,51 @@ export class ParserFactory {
 
     switch (extension) {
 
-      case ".mp2":
-      case ".mp3":
-      case ".m2a":
+      case '.mp2':
+      case '.mp3':
+      case '.m2a':
         return 'mpeg';
 
-      case ".ape":
+      case '.ape':
         return 'apev2';
 
-      case ".aac":
-      case ".mp4":
-      case ".m4a":
-      case ".m4b":
-      case ".m4pa":
-      case ".m4v":
-      case ".m4r":
-      case ".3gp":
+      case '.aac':
+      case '.mp4':
+      case '.m4a':
+      case '.m4b':
+      case '.m4pa':
+      case '.m4v':
+      case '.m4r':
+      case '.3gp':
         return 'mp4';
 
-      case ".wma":
-      case ".wmv":
-      case ".asf":
+      case '.wma':
+      case '.wmv':
+      case '.asf':
         return 'asf';
 
-      case ".flac":
+      case '.flac':
         return 'flac';
 
-      case ".ogg":
-      case ".ogv":
-      case ".oga":
-      case ".ogm":
-      case ".ogx":
-      case ".opus": // recommended filename extension for Ogg Opus
-      case ".spx": // recommended filename extension for Ogg Speex
+      case '.ogg':
+      case '.ogv':
+      case '.oga':
+      case '.ogm':
+      case '.ogx':
+      case '.opus': // recommended filename extension for Ogg Opus
+      case '.spx': // recommended filename extension for Ogg Speex
         return 'ogg';
 
-      case ".aif":
-      case ".aiff":
-      case ".aifc":
+      case '.aif':
+      case '.aiff':
+      case '.aifc':
         return 'aiff';
 
-      case ".wav":
+      case '.wav':
         return 'riff';
 
-      case ".wv":
-      case ".wvp":
+      case '.wv':
+      case '.wvp':
         return 'wavpack';
     }
   }
