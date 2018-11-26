@@ -26,25 +26,29 @@ describe("Parse MP3 files", () => {
     });
   });
 
-  describe('should be able to parse: Sleep Away.mp3 ', () => {
+  it('should be able to parse: Sleep Away.mp3', () => {
 
     const filePath = path.join(samplePath, 'mp3', 'Sleep Away.mp3');
 
-    it(`parse`, () => {
+    return mm.parseFile(filePath, {duration: true}).then(metadata => {
+      const format = metadata.format;
+      assert.deepEqual(format.dataformat, 'mp3');
+      assert.strictEqual(format.sampleRate, 44100);
+      assert.strictEqual(format.numberOfChannels, 2);
 
-      return mm.parseFile(filePath, {duration: true}).then(metadata => {
-        const format = metadata.format;
-        assert.deepEqual(format.dataformat, 'mp3');
-        assert.strictEqual(format.sampleRate, 44100);
-        assert.strictEqual(format.numberOfChannels, 2);
+      const common = metadata.common;
+      assert.strictEqual(common.title, 'Sleep Away');
+      assert.strictEqual(common.artist, 'Bob Acri');
+      assert.deepEqual(common.composer, ['Robert R. Acri']);
+      assert.deepEqual(common.genre, ['Jazz']);
 
-        const common = metadata.common;
-        assert.strictEqual(common.title, 'Sleep Away');
-        assert.strictEqual(common.artist, 'Bob Acri');
-        assert.deepEqual(common.composer, ['Robert R. Acri']);
-        assert.deepEqual(common.genre, ['Jazz']);
-      });
+      assert.strictEqual(common.picture.length, 1, 'should contain the cover');
+      const picture = common.picture[0];
+      assert.strictEqual(picture.description, 'thumbnail');
+      assert.strictEqual(picture.format, 'image/jpeg');
+      assert.strictEqual(picture.data.length, 27852);
     });
+
   });
 
   describe("should handle incomplete MP3 file", () => {
